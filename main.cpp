@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <chrono>
+#include <regex>
 #include <cassert>
 #include <string>
 #include <vector>
@@ -38,8 +39,6 @@ int main() {
 		int stuff = right[i] * count;
 		total2 += stuff;
 	}
-	cout << "day 1 part 2 answer:" << endl;
-	cout << total2 << endl;
 
 	/*day 1 part 1*/
 	sort(right.begin(), right.end());
@@ -51,6 +50,9 @@ int main() {
 	}
 	cout << "day 1 part 1 answer:" << endl;
 	cout << total << endl;
+
+	cout << "day 1 part 2 answer:" << endl;
+	cout << total2 << endl;
 
 
 
@@ -204,213 +206,52 @@ int main() {
 	vector < vector<int> > numbers;
 	int total3 = 0;
 	ifstream file3("Day3.txt");
-	vector<string>Day3;
+	regex pattern1(R"(mul\((\d{1,3}),(\d{1,3})\))");
+	string Day3;
 	string line;
 
 	while (getline(file3, line)) {
-		Day3.push_back(line);
+		Day3 += line ;
 	}
-	for (string line : Day3) {
-		int order = 0;
-		string multstuff;
-		/*collect the characters*/
-		for (char c : line) {
-			if (order == 0) {
-				if (c == 'm') order = 1;
+	sregex_iterator begin(Day3.begin(), Day3.end(), pattern1);
+	sregex_iterator end;
 
-			}
-			else if (order == 1) {
-				if (c == 'u') order = 2;
-				else order = 0;
-			}
-			else if (order == 2) {
-				if (c == 'l') order = 3;
-				else order = 0;
-			}
-			else if (order == 3) {
-				if (c == '(') {
-					order = 4;
-					multstuff.clear();
-				}
-				else order = 0;
-			}
-			else if (order == 4) {
-				if (c == ')') {
-					bool valid = true;
-					int commacount = 0;
-					for (char mc : multstuff) {
-						if (mc == ',') {
-							commacount++;
-						}
-						else if (!isdigit(mc)) {
-							valid = false;
-							break;
-						}
-					}
-
-					if (valid && commacount == 1) {
-						//added
-						int commaindex = multstuff.find(',');
-
-						string left = multstuff.substr(0, commaindex);
-						string right = multstuff.substr(commaindex + 1);
-
-
-						if (left.size() >= 1 && left.size() <= 3 && right.size() >= 1 && right.size() <= 3) {
-							replace(multstuff.begin(), multstuff.end(), ',', ' ');
-							int a = stoi(left);
-							int b = stoi(right);
-							total3 += a * b;
-
-						}
-
-						//added ab
-
-
-
-					}
-
-					multstuff.clear();
-					order = 0;
-
-				}
-				else if (isdigit(c) || c == ',') {
-					multstuff += c;
-				}
-				else {
-					order = 0;
-					multstuff.clear();
-				}
-
-			}
-			else {
-				order = 0;
-			}
-		}
-
-
-		//if (numbers.size() == 2) {
-		//	cout << numbers[0] * numbers[1] << endl;
-		//}
-		//else if (numbers.size() > 2){
-		//	cout << "error: more than 2 numbers found in line" << endl;
-		//}
-		//else {
-		//	cout << "error: less than 2 numbers found in line" << endl;
-		//}
-
+	for (auto i = begin; i != end; ++i) {
+		smatch match = *i;
+		int num1 = stoi(match[1]);
+		int num2 = stoi(match[2]);
+		total3 += num1 * num2;
 	}
-
 	cout << "day 3 part 1 answer:" << endl;
 	cout << total3 << endl;
+
+
 	//day 3 part 2
+	regex pattern2(R"(mul\((\d{1,3}),(\d{1,3})\)|do\(\)|don't\(\))");
 	total3 = 0;
 	bool mulEnabled = true;
+	
+	begin = sregex_iterator(Day3.begin(), Day3.end(), pattern2);
+	sregex_iterator end2;
 
-	line = "";
-
-	for (string line : Day3) {
-
-		int orderMul = 0;
-		int orderDo = 0;
-		int orderDont = 0;
-		string multstuff;
-
-		for (char c : line) {
-
-
-			if (orderDo == 0 && c == 'd') orderDo = 1;
-			else if (orderDo == 1 && c == 'o') orderDo = 2;
-			else if (orderDo == 2 && c == '(') orderDo = 3;
-			else if (orderDo == 3 && c == ')') {
-				mulEnabled = true;
-				orderDo = 0;
-			}
-			else orderDo = 0;
-
-
-			if (orderDont == 0 && c == 'd') orderDont = 1;
-			else if (orderDont == 1 && c == 'o') orderDont = 2;
-			else if (orderDont == 2 && c == 'n') orderDont = 3;
-			else if (orderDont == 3 && c == '\'') orderDont = 4;
-			else if (orderDont == 4 && c == 't') orderDont = 5;
-			else if (orderDont == 5 && c == '(') orderDont = 6;
-			else if (orderDont == 6 && c == ')') {
-				mulEnabled = false;
-				orderDont = 0;
-			}
-			else orderDont = 0;
-
-
-			if (orderMul == 0) {
-				if (c == 'm') orderMul = 1;
-			}
-			else if (orderMul == 1) {
-				if (c == 'u') orderMul = 2;
-				else orderMul = 0;
-			}
-			else if (orderMul == 2) {
-				if (c == 'l') orderMul = 3;
-				else orderMul = 0;
-			}
-			else if (orderMul == 3) {
-				if (c == '(') {
-					orderMul = 4;
-					multstuff.clear();
-				}
-				else orderMul = 0;
-			}
-			else if (orderMul == 4) {
-
-				if (c == ')') {
-
-					if (mulEnabled) {
-
-						bool valid = true;
-						int commacount = 0;
-
-						for (char mc : multstuff) {
-							if (mc == ',') commacount++;
-							else if (!isdigit(mc)) {
-								valid = false;
-								break;
-							}
-						}
-
-						if (valid && commacount == 1) {
-
-							int commaindex = multstuff.find(',');
-
-							string left = multstuff.substr(0, commaindex);
-							string right = multstuff.substr(commaindex + 1);
-
-							if (left.size() >= 1 && left.size() <= 3 &&
-								right.size() >= 1 && right.size() <= 3)
-							{
-								int a = stoi(left);
-								int b = stoi(right);
-
-								total3 += a * b;
-							}
-						}
-					}
-
-					multstuff.clear();
-					orderMul = 0;
-				}
-				else if (isdigit(c) || c == ',') {
-					multstuff += c;
-				}
-				else {
-					orderMul = 0;
-					multstuff.clear();
-				}
-			}
+	for (auto i = begin; i != end2; ++i) {
+		smatch match = *i;
+		if (match[0] == "do()") {
+			mulEnabled = true;
+		}
+		else if (match[0] == "don't()") {
+			mulEnabled = false;
+		}
+		if (mulEnabled && match[1] != "") {
+			int num1 = stoi(match[1]);
+			int num2 = stoi(match[2]);
+			total3 += num1 * num2;
 		}
 	}
 
-	cout << "day 3 part 2 answer:\n";
+	cout << "day 3 part 2 answer:" << endl;
 	cout << total3 << endl;
+
 
 
 
@@ -516,7 +357,7 @@ int main() {
 
 
 	/*day 5 part 1*/
-	/*i got this from somewhere else*/
+	
 	ifstream file5("Day5.txt");
 	string line5;
 	unordered_map<int8_t, unordered_set<int8_t>> p;
