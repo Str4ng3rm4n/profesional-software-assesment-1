@@ -1,12 +1,17 @@
-﻿#include <iostream>
+#include <iostream>
 #include <fstream>
+#include <chrono>
+#include <cassert>
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <unordered_map>
+#include <unordered_set>
 #include <cmath>
 #include <sstream>
 
 using namespace std;
+using namespace chrono;
 const int day2 = 1000;
 
 int main() {
@@ -57,7 +62,7 @@ int main() {
 		getline(file2, line);
 		Day2.push_back(line);
 	}
-	
+
 	int safecount = 0;
 	vector<string> unsafelevels;
 	for (string line : Day2) {
@@ -190,7 +195,7 @@ int main() {
 			safecount += 1;
 		}
 
-		
+
 	}
 	cout << "day 2 part 2 answer:" << endl;
 	cout << safecount << endl;
@@ -201,7 +206,7 @@ int main() {
 	ifstream file3("Day3.txt");
 	vector<string>Day3;
 	string line;
-	
+
 	while (getline(file3, line)) {
 		Day3.push_back(line);
 	}
@@ -211,15 +216,15 @@ int main() {
 		/*collect the characters*/
 		for (char c : line) {
 			if (order == 0) {
-				if(c == 'm') order = 1;
-				
+				if (c == 'm') order = 1;
+
 			}
-			else if (order == 1 ) {
-				if(c == 'u') order = 2;
+			else if (order == 1) {
+				if (c == 'u') order = 2;
 				else order = 0;
 			}
-			else if (order == 2 ) {
-				if(c == 'l') order = 3;
+			else if (order == 2) {
+				if (c == 'l') order = 3;
 				else order = 0;
 			}
 			else if (order == 3) {
@@ -251,7 +256,7 @@ int main() {
 						string right = multstuff.substr(commaindex + 1);
 
 
-						if (left.size() >= 1 && left.size() <= 3 && right.size() >= 1 && right.size() <= 3){
+						if (left.size() >= 1 && left.size() <= 3 && right.size() >= 1 && right.size() <= 3) {
 							replace(multstuff.begin(), multstuff.end(), ',', ' ');
 							int a = stoi(left);
 							int b = stoi(right);
@@ -262,12 +267,12 @@ int main() {
 						//added ab
 
 
-						
+
 					}
 
 					multstuff.clear();
 					order = 0;
-					
+
 				}
 				else if (isdigit(c) || c == ',') {
 					multstuff += c;
@@ -283,7 +288,7 @@ int main() {
 			}
 		}
 
-		
+
 		//if (numbers.size() == 2) {
 		//	cout << numbers[0] * numbers[1] << endl;
 		//}
@@ -304,7 +309,7 @@ int main() {
 
 	line = "";
 
-	for (string line : Day3){
+	for (string line : Day3) {
 
 		int orderMul = 0;
 		int orderDo = 0;
@@ -313,7 +318,7 @@ int main() {
 
 		for (char c : line) {
 
-			
+
 			if (orderDo == 0 && c == 'd') orderDo = 1;
 			else if (orderDo == 1 && c == 'o') orderDo = 2;
 			else if (orderDo == 2 && c == '(') orderDo = 3;
@@ -323,7 +328,7 @@ int main() {
 			}
 			else orderDo = 0;
 
-			
+
 			if (orderDont == 0 && c == 'd') orderDont = 1;
 			else if (orderDont == 1 && c == 'o') orderDont = 2;
 			else if (orderDont == 2 && c == 'n') orderDont = 3;
@@ -336,7 +341,7 @@ int main() {
 			}
 			else orderDont = 0;
 
-			
+
 			if (orderMul == 0) {
 				if (c == 'm') orderMul = 1;
 			}
@@ -411,7 +416,7 @@ int main() {
 
 
 
-	/*day 4 part 1*/ 
+	/*day 4 part 1*/
 	ifstream file4("Day4.txt");
 	string theword = "XMAS";
 	vector<string> words;
@@ -431,11 +436,11 @@ int main() {
 		wordgrid.push_back(row);
 	}
 
-	
+
 	/*loop through the x axis*/
 	for (vector<char> row : wordgrid) {
 		for (int i = 0; i + 3 < row.size(); i++) {
-			bool ordered = row[i] == 'X' &&row[i + 1] == 'M' && row[i + 2] == 'A' && row[i + 3] == 'S';
+			bool ordered = row[i] == 'X' && row[i + 1] == 'M' && row[i + 2] == 'A' && row[i + 3] == 'S';
 
 			bool reversed = row[i] == 'S' && row[i + 1] == 'A' && row[i + 2] == 'M' && row[i + 3] == 'X';
 
@@ -462,10 +467,10 @@ int main() {
 		}
 		thewords.clear();
 	}
-	
+
 
 	//loop through the diagonals
-	for(int i = 0; i < wordgrid.size(); i++) {
+	for (int i = 0; i < wordgrid.size(); i++) {
 		for (int j = 0; j < wordgrid[i].size(); j++) {
 			if (i + 3 < wordgrid.size() && j + 3 < wordgrid[i].size()) {
 				bool ordered = wordgrid[i][j] == 'X' && wordgrid[i + 1][j + 1] == 'M' && wordgrid[i + 2][j + 2] == 'A' && wordgrid[i + 3][j + 3] == 'S';
@@ -483,11 +488,11 @@ int main() {
 			}
 		}
 	}
-	
+
 	cout << "day 4 part 1 answer:" << endl;
 	cout << totalxmas << endl;
 
-	/*day 4 part 2*/ 
+	/*day 4 part 2*/
 	int totalxmas2 = 0;
 	for (int i = 0; i < wordgrid.size() - 1; i++) {
 		for (int j = 0; j < wordgrid[i].size() - 1; j++) {
@@ -510,10 +515,27 @@ int main() {
 	cout << totalxmas2 << endl;
 
 
-	/*Day 5 part 1*/
-
-
+	/*day 5 part 1*/
+	/*i got this from somewhere else*/
+	ifstream file5("Day5.txt");
+	string line5;
+	unordered_map<int8_t, unordered_set<int8_t>> p;
+	while (getline(file5, line5) && (line5 != ""))
+		p[stoi(line5.substr(0, 2))].insert(stoi(line5.substr(3, 2)));
+	int part1(0), part2(0);
+	while (getline(file5, line5)) {
+		vector<int8_t> ordered;
+		for (int i = 0; i < line5.length(); i += 3) ordered.push_back(stoi(line5.substr(i, 2)));
+		auto unOrdered(ordered);
+		sort(ordered.begin(), ordered.end(),
+			[&p](int8_t l, int8_t r) { return p[l].find(r) != p[l].end(); });
+		if (unOrdered == ordered)
+			part1 += ordered[ordered.size() / 2];
+		else
+			part2 += ordered[ordered.size() / 2];
+	}
 	
-
+	cout << "Part 1" << part1 << endl;
+	cout << "Part 2" << part2 << endl;
 	return 0;
 }
